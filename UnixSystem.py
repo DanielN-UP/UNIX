@@ -110,16 +110,15 @@ def viewloans():#checks the books that are onloan
     try:
         for person in loans.each():
             keyuserName.append(person.key())
-            print("Pers: ",keyuserName)
+            print("userID: ",keyuserName)
             loaned = db.child("outLoan").child(keyuserName[num]).get()
-            print("loan: ", loaned)
             num = num+1
             loaned = loaned[0].val()
             fileNo.append(loaned["fileNo"])
         return(keyuserName,fileNo)
     except:
         print("No files being used")
-        return 0,0
+        return "",""
 
 def displayloans(keyuserName,ufileNo):
     print("Displaying files being used")
