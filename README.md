@@ -10,3 +10,4 @@ The components that are implemented include:
 5. An admin section where admins are able to view users within the system, and delete users from the database.
 
 See README.txt on how to run
+User manual: https://drive.google.com/file/d/1uQsJF8K6c48AJ1L27TMVXd68uZGYR4Jd/view?usp=sharing
