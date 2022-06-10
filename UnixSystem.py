@@ -45,24 +45,24 @@ def checker(userName):
     else:
         return True
 
-def loanout(userName,ISBN): #Adds userName,ISBN and date into the loanout table
+def loanout(userName,fileNo): #Adds userName,fileNo and date into the loanout table
     try:
         time = date.today()
         time = time.strftime('%m/%d/%Y')
-        data = {"userName":userName,"ISBN":ISBN,"Date":time}
+        data = {"userName":userName,"fileNo":fileNo,"Date":time}
         db.child("outLoan").child(userName).push(data)
     except:
         print("Error")
 
-def returnLoan(userName,ISBN): #returns book back to book table and deletes entity
+def returnLoan(userName,fileNo): #returns book back to book table and deletes entity
     try:
         db.child("outLoan").child(userName).remove()
     except:
         print("Error")
 
-def AddBook(ISBN,Title,Author,Catergory,Year): #add book in books table
-    data = {"ISBN":ISBN,"Title":Title,"Author":Author,"Category":Catergory,"Year":Year}
-    db.child("books").child(ISBN).push(data)
+def AddBook(fileNo,Title,Author,Catergory,Year): #add book in books table
+    data = {"fileNo":fileNo,"Title":Title,"Author":Author,"Category":Catergory,"Year":Year}
+    db.child("books").child(fileNo).push(data)
     print(Title+" Has been Successfully added")
 
 def AddStudent(userName,Name,Surname,email,password): #add students in students table
@@ -77,13 +77,13 @@ def AddStudent(userName,Name,Surname,email,password): #add students in students 
 def UpdateStudent(userName,Column,Change):
     db.child("students").child(userName).update({Column:Change})
 
-def UpdateBooks(ISBN,Column,Change):
-    OD = json.loads(json.dumps(SearchBookISBN(ISBN)))
+def UpdateBooks(fileNo,Column,Change):
+    OD = json.loads(json.dumps(SearchBookfileNo(fileNo)))
     dict = []
     for i in OD:
         dict = OD[i]
-    change =(dict["ISBN"])
-    db.child("books").child(ISBN).update({Column:Change})
+    change =(dict["fileNo"])
+    db.child("books").child(fileNo).update({Column:Change})
 
 def viewStudents(): # view students
     keyuserName = []
@@ -104,37 +104,41 @@ def viewBooks(): #view books
 
 def viewloans():#checks the books that are onloan
     keyuserName = []
-    ISBN = []
+    fileNo = []
     num = 0
     loans = db.child("outLoan").get()
     try:
         for person in loans.each():
             keyuserName.append(person.key())
+            print("Pers: ",keyuserName)
             loaned = db.child("outLoan").child(keyuserName[num]).get()
+            print("loan: ", loaned)
             num = num+1
             loaned = loaned[0].val()
-            ISBN.append(int(loaned["ISBN"]))
-        return(keyuserName,ISBN)
+            fileNo.append(loaned["fileNo"])
+        return(keyuserName,fileNo)
     except:
         print("No files being used")
+        return 0,0
 
-def displayloans(keyuserName,uISBN):
+def displayloans(keyuserName,ufileNo):
     print("Displaying files being used")
-    stringhead =("{:<30} {:<30} {:<30} {:<30} {:<30}".format('userName','Email','file no','Title','Date'))
+    print("key: ", keyuserName)
+    stringhead =("{:<30} {:<30} {:<30} {:<30} {:<30}".format('userName','Email','fileNo','Title','Date'))
     for i in range(len(keyuserName)):
         Email,Name,userName,Password,Surname = splitStudent(keyuserName[i])
-        ISBN,Title,Author,Catergory,Year = splitBook(uISBN[i])
-        userName,ISBN,Date = splitOuts(keyuserName[i])
-        stringhead = stringhead + "\n{:<30} {:<30} {:<30} {:<30} {:<30}".format(userName,Email,ISBN,Title,Date)
+        fileNo,Title,Author,Catergory,Year = splitBook(ufileNo[i])
+        userName,fileNo,Date = splitOuts(keyuserName[i])
+        stringhead = stringhead + "\n{:<30} {:<30} {:<30} {:<30} {:<30}".format(userName,Email,fileNo,Title,Date)
     return stringhead
 
 
 def displaybooks(keyuserName):#allows the books to be viewed in a table
-    stringhead =("{:<10} {:<30} {:<30} {:<30} {:<30}".format('file no', 'Title', 'Author', 'Category', 'Year'))
+    stringhead =("{:<10} {:<30} {:<30} {:<30} {:<30}".format('fileNo', 'Title', 'Author', 'Category', 'Year'))
     #print each data item.
     for i in range(len(keyuserName)):
-        ISBN,Title,Author,Catergory,Year = splitBook(keyuserName[i])
-        stringhead = stringhead + "\n{:<10} {:<30} {:<30} {:<30} {:<30}".format(ISBN,Title,Author,Catergory,Year)
+        fileNo,Title,Author,Catergory,Year = splitBook(keyuserName[i])
+        stringhead = stringhead + "\n{:<10} {:<30} {:<30} {:<30} {:<30}".format(fileNo,Title,Author,Catergory,Year)
     return stringhead
 
 def displaystudents(keyuserName):#allows the students to be viewed in a table
@@ -147,9 +151,9 @@ def displaystudents(keyuserName):#allows the students to be viewed in a table
 
     return stringhead
 
-def SearchBookISBN(ISBN): #search book by ISBN in books table
+def SearchBookfileNo(fileNo): #search book by fileNo in books table
     try:
-        pr = db.child("books").child(ISBN).get()
+        pr = db.child("books").child(fileNo).get()
         return(pr.val())
     except:
         print("Incorrect file no")
@@ -171,8 +175,8 @@ def SearchLoanuserName(userName): #search student by userName in student table
 def deleteStudent(userName):# delete student
     db.child("students").child(userName).remove()
 
-def deleteBook(ISBN):# delete book
-    db.child("books").child(ISBN).remove()
+def deleteBook(fileNo):# delete book
+    db.child("books").child(fileNo).remove()
 
 def myprofile(userName): #Views my profile
     pr = db.child("outLoan").child(userName).get()
@@ -190,6 +194,7 @@ def splitStudent(userName): #Split the students attributes
         dict = []
         for i in OD:
             dict = OD[i]
+            
         Email = (dict["Email"])
         Name = (dict["Name"])
         userName = (dict["userName"])
@@ -199,17 +204,18 @@ def splitStudent(userName): #Split the students attributes
     except:
         print("userName does not exist")
 
-def splitBook(ISBN):
-    OD = json.loads(json.dumps(SearchBookISBN(ISBN)))
+def splitBook(fileNo):
+    OD = json.loads(json.dumps(SearchBookfileNo(fileNo)))
     dict = []
     for i in OD:
         dict = OD[i]
-    uISBN = (dict["ISBN"])
+        
+    fileNo = (dict["fileNo"])
     Author = (dict["Author"])
     Title = (dict["Title"])
     Catergory = (dict["Category"])
     Year = (dict["Year"])
-    return uISBN,Title,Author,Catergory,Year
+    return fileNo,Title,Author,Catergory,Year
 
 def splitOuts(userName):
     OD = json.loads(json.dumps(SearchLoanuserName(userName)))
@@ -217,21 +223,21 @@ def splitOuts(userName):
     for i in OD:
         dict = OD[i]
     userName = (dict["userName"])
-    ISBN = (dict["ISBN"])
+    fileNo = (dict["fileNo"])
     Date = (dict["Date"])
-    return userName,ISBN,Date
+    return userName,fileNo,Date
 
 
-def Field(ISBN,column):
-    OD = json.loads(json.dumps(SearchBookISBN(ISBN)))
+def Field(fileNo,column):
+    OD = json.loads(json.dumps(SearchBookfileNo(fileNo)))
     dict = []
     for i in OD:
         dict = OD[i]
     field= dict[column]
     return field
 
-def editBook(ISBN, column, change):
-    OD = json.loads(json.dumps(SearchBookISBN(ISBN)))
+def editBook(fileNo, column, change):
+    OD = json.loads(json.dumps(SearchBookfileNo(fileNo)))
     dict = []
     for i in OD:
         dict = OD[i]
@@ -243,8 +249,8 @@ def SearchTitle(title):
     Out = []
     for i in range(len(keyuserName)):
         if(Field(keyuserName[i],"Title") == title):
-                ISBN,Title,Author,Catergory,Year = splitBook(keyuserName[i])
-                Out.append(ISBN)
+                fileNo,Title,Author,Catergory,Year = splitBook(keyuserName[i])
+                Out.append(fileNo)
     return(Out)
 
 def SearchCat(cat):
@@ -253,8 +259,8 @@ def SearchCat(cat):
     Out = []
     for i in range(len(keyuserName)):
         if(Field(keyuserName[i],"Category") == cat):
-                ISBN,Title,Author,Catergory,Year = splitBook(keyuserName[i])
-                Out.append(ISBN)
+                fileNo,Title,Author,Catergory,Year = splitBook(keyuserName[i])
+                Out.append(fileNo)
     return(Out)
 
 def SearchYear(year):
@@ -263,8 +269,8 @@ def SearchYear(year):
     Out = []
     for i in range(len(keyuserName)):
         if(Field(keyuserName[i],"Year") == year):
-                ISBN,Title,Author,Catergory,Year = splitBook(keyuserName[i])
-                Out.append(ISBN)
+                fileNo,Title,Author,Catergory,Year = splitBook(keyuserName[i])
+                Out.append(fileNo)
     return(Out)
 
 def myprofile(userName): #Views my profile
@@ -277,10 +283,10 @@ def myprofile(userName): #Views my profile
 def mybooks(userName): #views my books
     try:
         key = userName
-        userName,ISBN,Date = splitOuts(key)
-        uISBN,Title,Author,Catergory,Year = splitBook(ISBN)
-        stringhead =("{:<30} {:<30} {:<30} {:<30} {:<30}{:<30}".format('Title','file no','Author','Catergory','Year','Date'))
-        stringhead = stringhead + "\n{:<30} {:<30} {:<30} {:<30} {:<30} {:<30}".format(Title,ISBN,Author,Catergory,Year,Date)
+        userName,fileNo,Date = splitOuts(key)
+        ufileNo,Title,Author,Catergory,Year = splitBook(fileNo)
+        stringhead =("{:<30} {:<30} {:<30} {:<30} {:<30}{:<30}".format('Title','fileNo','Author','Catergory','Year','Date'))
+        stringhead = stringhead + "\n{:<30} {:<30} {:<30} {:<30} {:<30} {:<30}".format(Title,fileNo,Author,Catergory,Year,Date)
         return stringhead
     except:
         return "No files being used"
