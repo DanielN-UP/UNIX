@@ -26,7 +26,7 @@ class Ui_AdminBooksWindow(object):
         ufileNo = self.edtfileNo.text()
         uID = self.edtIDLoan.text()
         db.loanout(uID, ufileNo)
-        self.txtOut.setText("Book loaned successfully!")
+        self.txtOut.setText("file pushed successfully!")
         self.edtIDLoan.setText("")
 
         a,b = db.viewloans()
@@ -38,7 +38,7 @@ class Ui_AdminBooksWindow(object):
         ufileNo = self.edtfileNo.text()
         uID = self.edtIDReturn.text()
         db.returnLoan(uID, ufileNo)
-        self.txtOut.setText("Book returned successfully!")
+        self.txtOut.setText("file returned successfully!")
         self.edtIDLoan.setText("")
 
         a,b = db.viewloans()
@@ -49,7 +49,7 @@ class Ui_AdminBooksWindow(object):
         self.txtOut.setText("")
         ufileNo = self.edtfileNo.text()
         db.deleteBook(ufileNo)
-        self.txtOut.setText("Book deleted successfully!")
+        self.txtOut.setText("file deleted successfully!")
         self.edtIDLoan.setText("")
 
         self.textEdit.setText("")
@@ -64,7 +64,7 @@ class Ui_AdminBooksWindow(object):
         uCategory = self.edtCategory.text()
         uYear = self.edtYear.text()
         db.AddBook(ufileNo,uTitle,uAuthor,uCategory,uYear)
-        self.txtOut.setText("Book added successfully!")
+        self.txtOut.setText("file added successfully!")
         self.edtIDLoan.setText("")
 
         self.textEdit.setText("")
@@ -786,7 +786,7 @@ class Ui_AdminBooksWindow(object):
         self.pushButton_3.setText(_translate("MainWindow", "Sign out"))
         self.label.setText(_translate("MainWindow", "Unix System | Admin"))
         self.edtfileNo.setPlaceholderText(_translate("MainWindow", "Enter file no here"))
-        self.label_6.setText(_translate("MainWindow", "Student ID:"))
+        self.label_6.setText(_translate("MainWindow", "User ID:"))
         self.edtIDReturn.setPlaceholderText(_translate("MainWindow", "Enter user ID here"))
         self.pbtnReturn.setWhatsThis(_translate("MainWindow", "\'My Profile\' button"))
         self.pbtnReturn.setText(_translate("MainWindow", "Confirm "))

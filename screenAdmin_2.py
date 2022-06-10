@@ -18,8 +18,8 @@ class Ui_AdminStudentsWindow(object):
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_AdminBooksWindow()
         self.ui.setupUi(self.window)
-        self.MainWindow.hide()
-        self.window.show()
+        self.window.hide()
+        self.MainWindow.show()
     
     def clickAdmReturn(self):
         print("clicked :: button: push file")
@@ -27,7 +27,7 @@ class Ui_AdminStudentsWindow(object):
         ufileNo = self.edtfileNoReturn.text()
         uID = self.edtStuID.text()
         db.returnLoan(uID, ufileNo)
-        self.txtStuOut.setText("file sent successfully!")
+        self.txtStuOut.setText("file pushed successfully!")
 
     def clickAdmnLoan(self):
         print("clicked :: button: file retrieve")
@@ -35,7 +35,7 @@ class Ui_AdminStudentsWindow(object):
         ufileNo = self.edtfileNoReturn.text()
         uID = self.edtStuID.text()
         db.loanout(uID, ufileNo)
-        self.txtStuOut.setText("file retrieved successfully!")
+        self.txtStuOut.setText("file returned successfully!")
 
     def clickAdmnDel(self):
         print("clicked :: button: Delete user")
