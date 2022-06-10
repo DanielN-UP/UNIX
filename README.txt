@@ -1,5 +1,14 @@
 ------------ READ ME ------------
+studentNo: u22708601
+Name: Daniel Njini
+email: u22708601@tuks.co.za
+System: UNIX
 
 To run the program,
 
-      python3 screenSignUp.py
+Client
+run: screenSignUp.py
+
+Admin
+run: screenAdmin.py
+
